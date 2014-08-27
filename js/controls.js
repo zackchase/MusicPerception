@@ -1,33 +1,37 @@
 
-var correctArrow = "right";
 var leftScale = 6;
 var centerScale = 0;
 var rightScale = 0;
 var numCorrect = 0;
 var numTotal = 0;
 
-comparisonList = [
+comparisonList = generateComparisons(1);
 
-    [2,2,1, "left"],
-    [3,3,2, "left"],
-    [1,1,3, "left"],
-    [4,1,1, "right"],
-    [4,4,2, "left"],
-    [3,4,4, "right"],
-    [3,0,0,"right"],
-    [0,1,1, "right"],
-    [4,4,0, "left"],
-    [2,0,0, "right"],
+// comparisonList = [
 
-
-];
-
+//     [2,2,1, "left"],
+//     [3,3,2, "left"],
+//     [1,1,3, "left"],
+//     [4,1,1, "right"],
+//     [4,4,2, "left"],
+//     [3,4,4, "right"],
+//     [3,0,0,"right"],
+//     [0,1,1, "right"],
+//     [4,4,0, "left"],
+//     [2,0,0, "right"],
 
 
-score = []
-for (var i = 0; i<comparisonList.length; i++){
-    score.push("blank");
-}
+// ];
+
+// var questionTimes = Array.apply(null, new Array(comparisonList.length)).map(Number.prototype.valueOf,0);
+var startTime;
+var finishTime;
+// var score = [];
+// var clicks = zeros([comparisonList.length, 3])
+
+// for (var i = 0; i<comparisonList.length; i++){
+//     score.push("blank");
+// }
 
 function Rectangle(x,y,w,h,ctx,fill,highlight,scale){
 
@@ -41,6 +45,7 @@ function Rectangle(x,y,w,h,ctx,fill,highlight,scale){
     this.ctx = ctx;
     this.fill = fill || "#AAAAAA";
     this.highlight = highlight || "#AAAAAA";
+    this.clicks = 0;
 }
 
 Rectangle.prototype.draw = function(){
@@ -76,6 +81,8 @@ Rectangle.prototype.trigger = function(){
 
 
 Rectangle.prototype.activate = function() {
+
+    this.clicks += 1;
     console.log("activating: ");
     console.log("starting scale #: " + this.scale)
     chosenRaga = pentatonicRagaCodes[this.scale].scale;
@@ -136,6 +143,12 @@ Arrow.prototype.deactivate = function(){
 
 Arrow.prototype.trigger = function(){
 
+    finishTime = new Date().getTime();
+    comparisonList[numTotal].quesitonTime = finishTime - startTime;
+    comparisonList[numTotal].clicksLeft = leftRectangle.clicks;
+    comparisonList[numTotal].clicksCenter = centerRectangle.clicks;
+    comparisonList[numTotal].clicksRight = rightRectangle.clicks;
+
     numTotal += 1;
 
     console.log("arrow triggered: deactivating all controls and registering guess");
@@ -145,16 +158,17 @@ Arrow.prototype.trigger = function(){
 
 
 
-    if (this.direction == correctArrow){
+    if (this.direction == comparisonList[numTotal-1].rightDirection){
         numCorrect += 1;
         console.log("made it to modal call (success)");
         $("#successModal").modal();
-        score[numTotal-1] = "right";
+        comparisonList[numTotal-1].answerCorrect = 1;
+
     }
     else {
         console.log("made it to modal call (fail)")
         $("#failModal").modal();
-        score[numTotal-1] = "wrong";
+        comparisonList[numTotal-1].answerCorrect = 0;
     }
 
     if (numTotal >= comparisonList.length){
@@ -223,22 +237,29 @@ function loadNextQuestion(){
     console.log("loading next question");
 
     if (numTotal < comparisonList.length){
-        leftRectangle.scale = comparisonList[numTotal][0];
-        centerRectangle.scale = comparisonList[numTotal][1];
-        rightRectangle.scale = comparisonList[numTotal][2];
-        correctArrow = comparisonList[numTotal][3];
+        leftRectangle.scale = comparisonList[numTotal].leftScale;
+        centerRectangle.scale = comparisonList[numTotal].centerScale;
+        rightRectangle.scale = comparisonList[numTotal].rightScale;
+        correctArrow = comparisonList[numTotal].correctDirection;
     }
 
-        newColors = permutation(colors.length, 3);
-        leftRectangle.fill = colors[newColors[0]][0];
-        leftRectangle.highlight = colors[newColors[0]][1];
-        centerRectangle.fill = colors[newColors[1]][0];
-        centerRectangle.highlight = colors[newColors[1]][1];
-        rightRectangle.fill = colors[newColors[2]][0];
-        rightRectangle.highlight = colors[newColors[2]][1];
+    newColors = permutation(colors.length, 3);
+    leftRectangle.fill = colors[newColors[0]][0];
+    leftRectangle.highlight = colors[newColors[0]][1];
+    centerRectangle.fill = colors[newColors[1]][0];
+    centerRectangle.highlight = colors[newColors[1]][1];
+    rightRectangle.fill = colors[newColors[2]][0];
+    rightRectangle.highlight = colors[newColors[2]][1];
 
 
     deactivateAll(shapes);
+
+    startTime = new Date().getTime();
+    leftRectangle.clicks = centerRectangle.clicks = rightRectangle.clicks = 0;
+
+    if(numTotal == comparisonList.length - 1){
+        $(".nextButton").html("Finish by completing our survey");
+    }
 
 }
 
@@ -265,7 +286,7 @@ function updateProgress(){
 
         console.log("made it to the loop in update progress. Filling: " + comparisonList[i] )
 
-        if (score[i] == "blank"){
+        if (comparisonList[i].answerCorrect == null){
             console.log("made it to the blank fill")
             progCtx.fillStyle = "rgb(200,200,200)";
             progCtx.fillRect(x, y ,progIncrement, progHeight);
@@ -274,7 +295,7 @@ function updateProgress(){
             progCtx.strokeRect(x + 1 ,y + 1, progIncrement -2, progHeight -2);
         }
 
-        else if (score[i] == "right"){
+        else if (comparisonList[i].answerCorrect ){
             console.log("made it to the right fill")
             progCtx.fillStyle = "#3071a9";
             progCtx.fillRect(x, y ,progIncrement, progHeight);
@@ -283,7 +304,7 @@ function updateProgress(){
             progCtx.strokeRect(x + 1 ,y + 1, progIncrement -2, progHeight -2);
         }
 
-        else if (score[i] == "wrong"){
+        else if (comparisonList[i].answerCorrect == 0){
             console.log("made it to the right fill")
             progCtx.fillStyle = "#c9302c";
             progCtx.fillRect(x, y ,progIncrement, progHeight);
@@ -317,6 +338,10 @@ $("#submitSurvey").click(function(){
     alert(age + nationality + handedness + lessons + sing + styles + email);
 
 });
+
+
+
+
 
 
 

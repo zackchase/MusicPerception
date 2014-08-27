@@ -2,3 +2,8 @@
 .help-text{
     font-size: 1.2em;
 }
+
+.modal .modal-body {
+    max-height: 420px;
+    overflow-y: auto;
+}
