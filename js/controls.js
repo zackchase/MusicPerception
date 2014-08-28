@@ -337,11 +337,17 @@ $("#submitSurvey").click(function(){
 
     alert(age + nationality + handedness + lessons + sing + styles + email);
 
+    $.ajax({
+        type:"POST",
+        url:"http://127.0.0.1:8000/postdata/",
+        data: {
+                "comparison_list": comparisonList // from form
+        },
+        success: function(){
+            alert("<h2>Task completed!</h2>")
+        }
+    });
+
 });
-
-
-
-
-
 
 

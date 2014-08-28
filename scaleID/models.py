@@ -6,18 +6,18 @@ from django.db import models
 class Session(models.Model):
     email = models.CharField(max_length=200)
     age = models.IntegerField()
-    nationality = models.CharField()
+    nationality = models.CharField(max_length=200)
     handed = models.CharField(max_length=20)
     sing = models.BooleanField()
 
-    listen_classical = models.BooleanField()
-    listen_pop  = models.BooleanField()
+    listen_indian_classical = models.BooleanField()
+    listen_bollywood = models.BooleanField()
+    listen__european_classical = models.BooleanField()
+    listen_pop = models.BooleanField()
     listen_rock  = models.BooleanField()
     listen_rap  = models.BooleanField()
     listen_jazz  = models.BooleanField()
     listen_rb = models.BooleanField()
-    listen_indian_classical = models.BooleanField()
-    listen_singer_songwriter = models.BooleanField()
     listen_gospel = models.BooleanField()
 
     def __unicode__(self):
@@ -26,23 +26,19 @@ class Session(models.Model):
 
 class Comparison(models.Model):
     session = models.ForeignKey(Session)
-    left_ID = models.IntegerField()
-    center_ID = models.IntegerField()
-    right_ID = models.IntegerField()
-    guess = models.CharField(max_length=20)
+    left_scale = models.IntegerField()
+    center_sclae = models.IntegerField()
+    right_scale = models.IntegerField()
+    right_direction = models.CharField(max_length=20)
+    answer_correct = models.BooleanField()
     time_spent = models.FloatField()
+    speed_interval = models.FloatField()
     just_intonation = models.BooleanField()
     mode = models.IntegerField()
-    speed_interval = models.FloatField()
-
-
-    # num clicks left
-    # num clicks center
-    # num clicks right
-    # time left
-    # time center
-    # time right
-    # total time on question
+    clicksLeft = models.IntegerField()
+    clicksCenter = models.IntegerField()
+    clicksRight = models.IntegerField()
+    questionTime = models.IntegerField()
 
 
 

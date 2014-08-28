@@ -40,12 +40,12 @@ function generateComparisons(numberOfComparisons){
             "rightDirection": correctDirection,   // "left" or "right"
             "answerCorrect": null, // "right" or "wrong" ---- or should it be {0,1}?
             "timeSpent": 0, // amount of time spent (in milliseconds)
-            "mode": mode,   // system used to choose notes
-            "justIntonation": justIntonation, // true of false
-            "clicksLeft": 0,
-            "clicksCenter": 0,
-            "clicksRight": 0,
             "interval": interval,  // length of each note in milliseconds
+            "justIntonation": justIntonation, // true of false
+            "mode": mode,   // system used to choose notes
+            "clicks_left": 0,
+            "clicks_center": 0,
+            "clicks_right": 0,
         }
 
         comparisonList.push(oneComparison);
