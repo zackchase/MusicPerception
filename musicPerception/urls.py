@@ -4,7 +4,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 
-from scaleID.views import scaleID, post_data
+from scaleID.views import scaleID, post_survey, post_comparison
 
 urlpatterns = patterns('',
     # Examples:
@@ -13,5 +13,6 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', scaleID),
-    url(r'^postdata/$', post_data),
+    url(r'^post_survey/$', post_survey),
+    url(r'^post_comparison/$', post_comparison),
 )

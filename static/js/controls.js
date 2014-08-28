@@ -323,7 +323,9 @@ updateProgress();
 
 
 // Send results to the server
-$("#submitSurvey").click(function(){
+$("#submitSurvey").click(function(e){
+    e.preventDefault();
+
 
     // capture survey information
     // capture scores
@@ -352,10 +354,9 @@ $("#submitSurvey").click(function(){
 
     $.ajax({
         type:"POST",
-        url:"http://127.0.0.1:8000/postdata/",
-        data: {
-                "comparison_list": comparisonList // from form
-        },
+        url:"http://127.0.0.1:8000/post_survey/",
+        data: surveyData,
+
         success: function(){
             $("#completeModal").modal();
         }

@@ -3,12 +3,12 @@ from django.db import models
 # Create your models here.
 
 
-class Session(models.Model):
+class Visit(models.Model):
     email = models.CharField(max_length=200)
-    age = models.IntegerField()
+    age = models.IntegerField(null=True)
     nationality = models.CharField(max_length=200)
     handed = models.CharField(max_length=20)
-    sing = models.BooleanField()
+    sing = models.NullBooleanField(null=True)
 
     # listen_indian_classical = models.BooleanField()
     # listen_bollywood = models.BooleanField()
@@ -21,11 +21,11 @@ class Session(models.Model):
     # listen_gospel = models.BooleanField()
 
     def __unicode__(self):
-        return str(self.id) + " " + self.email
+        return "Visit #" + str(self.id) + ", " + self.email
 
 
 class Comparison(models.Model):
-    session = models.ForeignKey(Session)
+    visit = models.ForeignKey(Visit)
     left_scale = models.IntegerField()
     center_sclae = models.IntegerField()
     right_scale = models.IntegerField()

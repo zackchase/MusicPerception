@@ -8,30 +8,21 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Session'
-        db.create_table(u'scaleID_session', (
+        # Adding model 'Visit'
+        db.create_table(u'scaleID_visit', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('email', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('age', self.gf('django.db.models.fields.IntegerField')()),
+            ('age', self.gf('django.db.models.fields.IntegerField')(null=True)),
             ('nationality', self.gf('django.db.models.fields.CharField')(max_length=200)),
             ('handed', self.gf('django.db.models.fields.CharField')(max_length=20)),
-            ('sing', self.gf('django.db.models.fields.BooleanField')()),
-            ('listen_indian_classical', self.gf('django.db.models.fields.BooleanField')()),
-            ('listen_bollywood', self.gf('django.db.models.fields.BooleanField')()),
-            ('listen__european_classical', self.gf('django.db.models.fields.BooleanField')()),
-            ('listen_pop', self.gf('django.db.models.fields.BooleanField')()),
-            ('listen_rock', self.gf('django.db.models.fields.BooleanField')()),
-            ('listen_rap', self.gf('django.db.models.fields.BooleanField')()),
-            ('listen_jazz', self.gf('django.db.models.fields.BooleanField')()),
-            ('listen_rb', self.gf('django.db.models.fields.BooleanField')()),
-            ('listen_gospel', self.gf('django.db.models.fields.BooleanField')()),
+            ('sing', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
         ))
-        db.send_create_signal(u'scaleID', ['Session'])
+        db.send_create_signal(u'scaleID', ['Visit'])
 
         # Adding model 'Comparison'
         db.create_table(u'scaleID_comparison', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('session', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['scaleID.Session'])),
+            ('visit', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['scaleID.Visit'])),
             ('left_scale', self.gf('django.db.models.fields.IntegerField')()),
             ('center_sclae', self.gf('django.db.models.fields.IntegerField')()),
             ('right_scale', self.gf('django.db.models.fields.IntegerField')()),
@@ -50,8 +41,8 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        # Deleting model 'Session'
-        db.delete_table(u'scaleID_session')
+        # Deleting model 'Visit'
+        db.delete_table(u'scaleID_visit')
 
         # Deleting model 'Comparison'
         db.delete_table(u'scaleID_comparison')
@@ -72,27 +63,18 @@ class Migration(SchemaMigration):
             'questionTime': ('django.db.models.fields.IntegerField', [], {}),
             'right_direction': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'right_scale': ('django.db.models.fields.IntegerField', [], {}),
-            'session': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scaleID.Session']"}),
             'speed_interval': ('django.db.models.fields.FloatField', [], {}),
-            'time_spent': ('django.db.models.fields.FloatField', [], {})
+            'time_spent': ('django.db.models.fields.FloatField', [], {}),
+            'visit': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scaleID.Visit']"})
         },
-        u'scaleID.session': {
-            'Meta': {'object_name': 'Session'},
-            'age': ('django.db.models.fields.IntegerField', [], {}),
+        u'scaleID.visit': {
+            'Meta': {'object_name': 'Visit'},
+            'age': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
             'email': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'handed': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'listen__european_classical': ('django.db.models.fields.BooleanField', [], {}),
-            'listen_bollywood': ('django.db.models.fields.BooleanField', [], {}),
-            'listen_gospel': ('django.db.models.fields.BooleanField', [], {}),
-            'listen_indian_classical': ('django.db.models.fields.BooleanField', [], {}),
-            'listen_jazz': ('django.db.models.fields.BooleanField', [], {}),
-            'listen_pop': ('django.db.models.fields.BooleanField', [], {}),
-            'listen_rap': ('django.db.models.fields.BooleanField', [], {}),
-            'listen_rb': ('django.db.models.fields.BooleanField', [], {}),
-            'listen_rock': ('django.db.models.fields.BooleanField', [], {}),
             'nationality': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
-            'sing': ('django.db.models.fields.BooleanField', [], {})
+            'sing': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'})
         }
     }
 
