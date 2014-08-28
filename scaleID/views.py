@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.template import RequestContext, loader
 
 # Create your views here.
-def home(request):
-    return HttpResponse("<html>yo</html>")
+def scaleID(request):
+    return render_to_response("scaleID.html", {}, context_instance=RequestContext(request))
 
 
 def post_data(request):

@@ -10,15 +10,15 @@ class Session(models.Model):
     handed = models.CharField(max_length=20)
     sing = models.BooleanField()
 
-    listen_indian_classical = models.BooleanField()
-    listen_bollywood = models.BooleanField()
-    listen__european_classical = models.BooleanField()
-    listen_pop = models.BooleanField()
-    listen_rock  = models.BooleanField()
-    listen_rap  = models.BooleanField()
-    listen_jazz  = models.BooleanField()
-    listen_rb = models.BooleanField()
-    listen_gospel = models.BooleanField()
+    # listen_indian_classical = models.BooleanField()
+    # listen_bollywood = models.BooleanField()
+    # listen__european_classical = models.BooleanField()
+    # listen_pop = models.BooleanField()
+    # listen_rock  = models.BooleanField()
+    # listen_rap  = models.BooleanField()
+    # listen_jazz  = models.BooleanField()
+    # listen_rb = models.BooleanField()
+    # listen_gospel = models.BooleanField()
 
     def __unicode__(self):
         return str(self.id) + " " + self.email
