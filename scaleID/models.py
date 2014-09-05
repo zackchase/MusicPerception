@@ -9,6 +9,7 @@ class Visit(models.Model):
     nationality = models.CharField(max_length=200)
     handed = models.CharField(max_length=20)
     sing = models.NullBooleanField(null=True)
+    lessons = models.NullBooleanField(null=True)
 
     # listen_indian_classical = models.BooleanField()
     # listen_bollywood = models.BooleanField()
@@ -25,9 +26,9 @@ class Visit(models.Model):
 
 
 class Comparison(models.Model):
-    visit = models.ForeignKey(Visit)
+    visit = models.ForeignKey(Visit, related_name="comparisons")
     left_scale = models.IntegerField()
-    center_sclae = models.IntegerField()
+    center_scale = models.IntegerField()
     right_scale = models.IntegerField()
     right_direction = models.CharField(max_length=20)
     answer_correct = models.BooleanField()
@@ -35,12 +36,11 @@ class Comparison(models.Model):
     speed_interval = models.FloatField()
     just_intonation = models.BooleanField()
     mode = models.IntegerField()
-    clicksLeft = models.IntegerField()
-    clicksCenter = models.IntegerField()
-    clicksRight = models.IntegerField()
-    questionTime = models.IntegerField()
+    clicks_left = models.IntegerField()
+    clicks_center = models.IntegerField()
+    clicks_right = models.IntegerField()
 
 
 
     def __unicode__(self):
-        return str(self.session) + str(self.left_ID)  + str(self.center_ID) + str(self.right_ID)
+        return str(self.visit) + str(self.left_scale)  + str(self.center_scale) + str(self.right_scale)

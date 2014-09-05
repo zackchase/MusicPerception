@@ -7,7 +7,7 @@ var numTotal = 0;
 var surveyData;
 
 
-comparisonList = generateComparisons(1);
+comparisonList = generateComparisons(10);
 
 // comparisonList = [
 
@@ -146,7 +146,7 @@ Arrow.prototype.deactivate = function(){
 Arrow.prototype.trigger = function(){
 
     finishTime = new Date().getTime();
-    comparisonList[numTotal].quesitonTime = finishTime - startTime;
+    comparisonList[numTotal].timeSpent = finishTime - startTime;
     comparisonList[numTotal].clicksLeft = leftRectangle.clicks;
     comparisonList[numTotal].clicksCenter = centerRectangle.clicks;
     comparisonList[numTotal].clicksRight = rightRectangle.clicks;
@@ -164,13 +164,13 @@ Arrow.prototype.trigger = function(){
         numCorrect += 1;
         console.log("made it to modal call (success)");
         $("#successModal").modal();
-        comparisonList[numTotal-1].answerCorrect = 1;
+        comparisonList[numTotal-1].answerCorrect = true;
 
     }
     else {
         console.log("made it to modal call (fail)")
         $("#failModal").modal();
-        comparisonList[numTotal-1].answerCorrect = 0;
+        comparisonList[numTotal-1].answerCorrect = false;
     }
 
     if (numTotal >= comparisonList.length){
@@ -179,6 +179,18 @@ Arrow.prototype.trigger = function(){
     }
 
     $("#scorePanel").html("<h1>Score: " + numCorrect + "/" + numTotal + "</h1>");
+
+    //register result with server
+    $.ajax({
+        type:"POST",
+        url:"http://127.0.0.1:8000/post_comparison/",
+        data: comparisonList[numTotal-1],
+
+        success: function(){
+            console.log("Success - registered comparison result with server")
+        }
+    });
+
 
     loadNextQuestion();
     updateProgress();
@@ -259,7 +271,7 @@ function loadNextQuestion(){
     startTime = new Date().getTime();
     leftRectangle.clicks = centerRectangle.clicks = rightRectangle.clicks = 0;
 
-    if(numTotal == comparisonList.length - 1){
+    if(numTotal == comparisonList.length){
         $(".nextButton").html("Finish by completing our survey");
     }
 
