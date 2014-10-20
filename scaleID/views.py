@@ -2,7 +2,7 @@ from django.shortcuts import render, render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 from scaleID.models import Visit, Comparison
-
+import numpy as np
 
 #set id for the whole session
 # submit comparisons
@@ -169,11 +169,22 @@ def report_panel(request):
     no_lessons_correct = 0
     no_lessons_total = 0
 
+    num_singers = 0
+    num_lessons = 0
+
     total_complete_correct_comparisons = 0
 
     visits_correct_count = [0,0,0,0,0,0,0,0,0,0,0]
 
     scale_comparisons = {}
+
+
+    dimensions = (8,8)
+    comparison_correct_matrix = np.zeros(dimensions)
+    comparison_total_matrix = np.zeros(dimensions)
+
+
+
 
     for visit in visits:
         local_correct_count = 0
@@ -186,7 +197,15 @@ def report_panel(request):
                 num_emails += 1
 
             for comparison in visit.comparisons.all():
+
+                this_center = comparison.center_scale
+                this_other = comparison.left_scale if (comparison.left_scale != comparison.center_scale) else comparison.right_scale
+                print "center scale: " + str(this_center) + " , other scale: " + str(this_other)
+
+                comparison_total_matrix[this_center][this_other] += 1
+
                 if comparison.answer_correct == True:
+                    comparison_correct_matrix[this_center][this_other] += 1
                     local_correct_count += 1
                     total_complete_correct_comparisons += 1
 
@@ -228,6 +247,11 @@ def report_panel(request):
                         right_correct += 1
 
 
+            if visit.sing:
+                num_singers += 1
+
+            if visit.lessons:
+                num_lessons += 1
 
             visits_correct_count[local_correct_count] += 1
 
@@ -235,6 +259,34 @@ def report_panel(request):
         else:
             complete_visit = False
 
+    print"correct matrix"
+    print comparison_correct_matrix
+
+    print "total matrix"
+    print comparison_total_matrix
+
+    for i in xrange(dimensions[0]):
+        for j in xrange(dimensions[1]):
+            if j > i:
+                comparison_total_matrix[j][i] += comparison_total_matrix[i][j]
+                comparison_correct_matrix[j][i] += comparison_correct_matrix[i][j]
+                comparison_total_matrix[i][j] = 0
+                comparison_correct_matrix[i][j] = 0
+
+    print "center-agnostic correct matrix"
+    print comparison_correct_matrix
+
+    print "center-agnostic total matrix"
+    print comparison_total_matrix
+
+    percentage_matrix = np.zeros(dimensions)
+    for i in xrange(dimensions[0]):
+        for j in xrange(dimensions[1]):
+            if comparison_total_matrix[i][j] != 0.0:
+                percentage_matrix[i][j] = comparison_correct_matrix[i][j] / comparison_total_matrix[i][j]
+
+    print "percentage matrix (center-agnostic)"
+    print percentage_matrix
 
     left_percent = (left_correct + 0.0) / left_total
     right_percent = (right_correct + 0.0) / right_total
@@ -243,7 +295,7 @@ def report_panel(request):
     not_sing_percent = (not_sing_correct + 0.0) / not_sing_total
 
     lessons_percent = (lessons_correct + 0.0) / lessons_total
-    no_lessons_percent = (no_lessons_correct + 0.0 ) / lessons_total
+    no_lessons_percent = (no_lessons_correct + 0.0 ) / no_lessons_total
 
     num_complete_comparisons = num_complete_visits * 10
     comparisons_percent = (total_complete_correct_comparisons + 0.0) / num_complete_comparisons
@@ -253,7 +305,7 @@ def report_panel(request):
         "num_emails": num_emails, "visits_correct_count": visits_correct_count, "guesses_left": guesses_left, "guesses_right": guesses_right,
         "left_percent": left_percent, "right_percent": right_percent, "comparisons_percent": comparisons_percent,
         "sing_percent": sing_percent, "not_sing_percent": not_sing_percent, "lessons_percent": lessons_percent,
-        "no_lessons_percent": no_lessons_percent,
+        "no_lessons_percent": no_lessons_percent, "num_singers": num_singers, "num_lessons": num_lessons,
 
         }, context_instance=RequestContext(request) )
 
